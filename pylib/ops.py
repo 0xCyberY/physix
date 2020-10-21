@@ -731,17 +731,24 @@ def do_physix_conf_init(options):
         return FAILURE
     ok("Systemd Requirement check")
 
-    info("Creating Partitions")
-    if create_partitions(BUILD_CONFIG):
-        error("Creating Partitions")
-        return FAILURE
-    ok("Creating Partitions")
+    if BUILD_CONFIG['CONF_DISABLE_PARTITIONING'].lower() == 'n':
+        """ We expect a blank device """
+        if num_root_device_partitions(BUILD_CONFIG) > 0:
+            error("Found Existing partition(s) on CONF_ROOT_DEVICE, Please remove them and restart this opperation")
+            return FAILURE
 
-    info("Creating Volumes")
-    if create_volumes(BUILD_CONFIG):
-        error("Creating Volumes")
-        return FAILURE
-    ok("Create Volumes")
+        info("Creating Partitions")
+        if create_partitions(BUILD_CONFIG):
+            error("Creating Partitions")
+            return FAILURE
+        ok("Creating Partitions")
+    else:
+        """ Skip partitioning and setup volumes on CONF_CUSTOM_PARTITION """
+        info("Creating Volumes")
+        if create_volumes(BUILD_CONFIG):
+            error("Creating Volumes")
+            return FAILURE
+        ok("Create Volumes")
 
     info("Formating Volumes")
     if format_volumes(BUILD_CONFIG):

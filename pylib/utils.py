@@ -229,6 +229,20 @@ def load_physix_config(cfg):
     return config
 
 
+def num_root_device_partitions(config):
+    """
+        Return number of partitions on root device
+
+        Keyword arguments:
+        config -- string: path to config file
+    """
+
+    root_dev = config["CONF_ROOT_DEVICE"]
+    devlst = os.listdir("/dev")
+    dev_count = sum(1 for ln in devlst if root_dev in ln)
+    return dev_count
+
+
 def verify_checker(config):
     """
         Read input physix.conf as dict
@@ -245,14 +259,14 @@ def verify_checker(config):
         if validate(ret_tpl, "Check: "+ tool):
             return FAILURE
 
-    root_dev = config["CONF_ROOT_DEVICE"]
-    devlst = os.listdir("/dev")
-    dev_count = sum(1 for ln in devlst if root_dev in ln)
-    if dev_count > 1:
-        msg = "".join(["Found Existing partition(s) on: /dev/", root_dev,
-                       "Please remove them and restart this opperation"])
-        error(msg)
-        return FAILURE
+    #root_dev = config["CONF_ROOT_DEVICE"]
+    #devlst = os.listdir("/dev")
+    #dev_count = sum(1 for ln in devlst if root_dev in ln)
+    #if dev_count > 1:
+    #    msg = "".join(["Found Existing partition(s) on: /dev/", root_dev,
+    #                   "Please remove them and restart this opperation"])
+    #    error(msg)
+    #    return FAILURE
 
     if config['CONF_UEFI_ENABLE'].lower() == "y":
         if not os.path.exists("/sys/firmware/efi"):
