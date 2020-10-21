@@ -708,7 +708,7 @@ def config_base_system(recipe, context, start, stop):
     run_cmd_live(cmd)
 
 
-def do_partition_init(options):
+def do_physix_conf_init(options):
     """
     High level function whcih calls lower functions that:
       - create partitions
