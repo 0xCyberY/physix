@@ -73,7 +73,11 @@ def create_volumes(config):
     """
 
     system_root = "/dev/" + config["CONF_ROOT_DEVICE"].strip('\n')
-    system_root = system_root + "3"
+    if config['CONF_SKIP_PARTITIONING'].lower() == 'y':
+        system_root = system_root + str(config['CONF_INSTALL_TO_CUSTOM_PARTITION'])
+    else:
+        system_root = system_root + "3"
+
     ret_tpl = run_cmd(['pvcreate', '-ff', '-y', system_root])
     if validate(ret_tpl, "Physical Volume Create: "+system_root):
         return FAILURE
@@ -106,6 +110,30 @@ def create_volumes(config):
     return SUCCESS
 
 
+def format_partitions(config):
+    """
+        Format partitions.
+        Return SUCCESS/FAILURE
+
+        Keyword arguments:
+        config -- dict: config options
+    """
+
+    filesystem = config['CONF_ROOTPART_FS']
+    mkfs_cmd  = "mkfs." + filesystem
+    system_root = "/dev/" + config["CONF_ROOT_DEVICE"]
+
+    part1 = system_root + "1"
+    ret_tpl = run_cmd(['mkfs.fat', part1])
+    if validate(ret_tpl, "mkfs.fat: " + part1):
+        return FAILURE
+
+    part2 = system_root + "2"
+    ret_tpl = run_cmd(['mkfs.ext2', part2])
+    if validate(ret_tpl, "mkfs.ext2: " + part2):
+        return FAILURE
+    return SUCCESS
+
 def format_volumes(config):
     """
     Format LVM volumes and partitions.
@@ -121,15 +149,15 @@ def format_volumes(config):
     system_root = "/dev/" + config["CONF_ROOT_DEVICE"]
     vol_group_name = config["CONF_VOL_GROUP_NAME"]
 
-    part1 = system_root + "1"
-    ret_tpl = run_cmd(['mkfs.fat', part1])
-    if validate(ret_tpl, "mkfs.fat: " + part1):
-        return FAILURE
+    #part1 = system_root + "1"
+    #ret_tpl = run_cmd(['mkfs.fat', part1])
+    #if validate(ret_tpl, "mkfs.fat: " + part1):
+    #    return FAILURE
 
-    part2 = system_root + "2"
-    ret_tpl = run_cmd(['mkfs.ext2', part2])
-    if validate(ret_tpl, "mkfs.ext2: " + part2):
-        return FAILURE
+    #part2 = system_root + "2"
+    #ret_tpl = run_cmd(['mkfs.ext2', part2])
+    #if validate(ret_tpl, "mkfs.ext2: " + part2):
+    #    return FAILURE
 
     physix_root = "/dev/mapper/" + vol_group_name + "-root"
     ret_tpl = run_cmd([mkfs_cmd, physix_root])
@@ -713,6 +741,7 @@ def do_physix_conf_init(options):
     High level function whcih calls lower functions that:
       - create partitions
       - create volumes
+      - format partitions
       - format volumes
       - mount volumes
     Return SUCCESS/FAILURE
@@ -731,7 +760,7 @@ def do_physix_conf_init(options):
         return FAILURE
     ok("Systemd Requirement check")
 
-    if BUILD_CONFIG['CONF_DISABLE_PARTITIONING'].lower() == 'n':
+    if BUILD_CONFIG['CONF_SKIP_PARTITIONING'].lower() == 'n':
         """ We expect a blank device """
         if num_root_device_partitions(BUILD_CONFIG) > 0:
             error("Found Existing partition(s) on CONF_ROOT_DEVICE, Please remove them and restart this opperation")
@@ -742,13 +771,22 @@ def do_physix_conf_init(options):
             error("Creating Partitions")
             return FAILURE
         ok("Creating Partitions")
-    else:
+
+        info("Format Partitions")
+        if format_partitions(BUILD_CONFIG):
+            error("Format Partitions")
+            return FAILURE
+        ok("Format Partitions")
+    elif BUILD_CONFIG['CONF_SKIP_PARTITIONING'].lower() == 'y':
         """ Skip partitioning and setup volumes on CONF_CUSTOM_PARTITION """
         info("Creating Volumes")
         if create_volumes(BUILD_CONFIG):
             error("Creating Volumes")
             return FAILURE
         ok("Create Volumes")
+    else:
+        error("Invalid config")
+        return FAILURE
 
     info("Formating Volumes")
     if format_volumes(BUILD_CONFIG):
