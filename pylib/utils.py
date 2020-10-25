@@ -644,3 +644,32 @@ def unpack(element, context):
 
     return SUCCESS
 
+
+def separate_device_and_partition(device):
+    """ Separate the string by device and partition number
+        return list: [device, part_num]
+        return empty string on error
+
+        Keyword arguments:
+        device -- string: "sda12"
+    """
+
+    dev = ''
+    part = ''
+    for i in range(len(str(DEVICE))):
+        if not device[i].isdigit():
+            dev = dev + device[i]
+        else:
+            part = part + device[i]
+
+    for i in range(len(dev)):
+        if dev[i].isdigit():
+            return []
+    for i in range(len(part)):
+        if not part[i].isdigit():
+            return []
+
+    return [dev, part]
+
+    
+

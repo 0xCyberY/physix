@@ -74,7 +74,7 @@ def create_volumes(config):
 
     system_root = "/dev/" + config["CONF_ROOT_DEVICE"].strip('\n')
     if config['CONF_SKIP_PARTITIONING'].lower() == 'y':
-        system_root = system_root + str(config['CONF_INSTALL_TO_CUSTOM_PARTITION'])
+        system_root = "/dev/" + str(config['CONF_INSTALL_DEV_PARTITION'])
     else:
         system_root = system_root + "3"
 
@@ -134,6 +134,7 @@ def format_partitions(config):
         return FAILURE
     return SUCCESS
 
+
 def format_volumes(config):
     """
     Format LVM volumes and partitions.
@@ -145,19 +146,7 @@ def format_volumes(config):
 
     filesystem = config['CONF_ROOTPART_FS']
     mkfs_cmd  = "mkfs." + filesystem
-
-    system_root = "/dev/" + config["CONF_ROOT_DEVICE"]
     vol_group_name = config["CONF_VOL_GROUP_NAME"]
-
-    #part1 = system_root + "1"
-    #ret_tpl = run_cmd(['mkfs.fat', part1])
-    #if validate(ret_tpl, "mkfs.fat: " + part1):
-    #    return FAILURE
-
-    #part2 = system_root + "2"
-    #ret_tpl = run_cmd(['mkfs.ext2', part2])
-    #if validate(ret_tpl, "mkfs.ext2: " + part2):
-    #    return FAILURE
 
     physix_root = "/dev/mapper/" + vol_group_name + "-root"
     ret_tpl = run_cmd([mkfs_cmd, physix_root])
@@ -178,6 +167,33 @@ def format_volumes(config):
     ret_tpl = run_cmd([mkfs_cmd, physix_admin])
     if validate(ret_tpl, mkfs_cmd+":"+ physix_admin):
         return FAILURE
+
+    return SUCCESS
+
+
+def mount_partitions(config):
+    """
+        Mount partitions.
+        Return SUCCESS/FAILURE
+
+        Keyword arguments:
+        config -- dict: config options
+    """
+
+    boot = BUILDROOT + "/boot"
+    os.mkdir(boot, 0o755)
+    boot_part = "/dev/" + config["CONF_ROOT_DEVICE"].strip('\n') + "2"
+    ret_tpl = run_cmd(['mount', boot_part, boot])
+    if validate(ret_tpl, "Mount: " + boot_part):
+        return FAILURE
+
+    if config['CONF_UEFI_ENABLE'].lower() == 'y':
+        efi_dir = BUILDROOT + "/boot/efi"
+        os.mkdir(efi_dir, 0o755)
+        efi_boot_part = "/dev/" + config["CONF_ROOT_DEVICE"].strip('\n') + "1"
+        ret_tpl = run_cmd(['mount', efi_boot_part, efi_dir])
+        if validate(ret_tpl, "Mount: " + efi_boot_part):
+            return FAILURE
 
     return SUCCESS
 
@@ -250,21 +266,6 @@ def mount_volumes(config):
     ret_tpl = run_cmd(['mount', volume_admin, mnt_point])
     if validate(ret_tpl, "Mount: " + volume_admin):
         return FAILURE
-
-    boot = BUILDROOT + "/boot"
-    os.mkdir(boot, 0o755)
-    boot_part = "/dev/" + config["CONF_ROOT_DEVICE"].strip('\n') + "2"
-    ret_tpl = run_cmd(['mount', boot_part, boot])
-    if validate(ret_tpl, "Mount: " + boot_part):
-        return FAILURE
-
-    if config['CONF_UEFI_ENABLE'].lower() == 'y':
-        efi_dir = BUILDROOT + "/boot/efi"
-        os.mkdir(efi_dir, 0o755)
-        efi_boot_part = "/dev/" + config["CONF_ROOT_DEVICE"].strip('\n') + "1"
-        ret_tpl = run_cmd(['mount', efi_boot_part, efi_dir])
-        if validate(ret_tpl, "Mount: " + efi_boot_part):
-            return FAILURE
 
     return SUCCESS
 
@@ -799,6 +800,12 @@ def do_physix_conf_init(options):
         error("Mounting Volumes")
         return FAILURE
     ok("Mounted Volumes")
+
+    info("Mounting Partitions")
+    if mount_partitions(BUILD_CONFIG):
+        error("Mounting Partitions")
+        return FAILURE
+    ok("Mounted Partitions")
 
     if setup(BUILD_CONFIG):
         return FAILURE
