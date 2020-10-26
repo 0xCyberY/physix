@@ -4,8 +4,8 @@
 source /opt/admin/physix/include.sh || exit 1
 source /opt/admin/physix/physix.conf || exit 1
 
-BOOT=`blkid /dev/"$CONF_ROOT_DEVICE"2 | cut -d'"' -f2`
-EFI_BOOT=`blkid /dev/"$CONF_ROOT_DEVICE"1 | cut -d'"' -f2`
+BOOT=`blkid /dev/"$CONF_BOOT_DEV_PART" | cut -d'"' -f2`
+EFI_BOOT=`blkid /dev/"$CONF_UEFI_DEV_PART" | cut -d'"' -f2`
 
 
 if [ "$CONF_UEFI_ENABLE" == "y" ] ; then
