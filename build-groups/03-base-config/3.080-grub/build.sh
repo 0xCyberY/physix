@@ -10,8 +10,8 @@ ROOT_DEV=`echo $CONF_ROOT_DEVICE | cut -d'=' -f2`
 ROOT_PART=`echo $CONF_ROOT_PARTITION | cut -d'=' -f2`
 ROOT_PART='\/dev\/'$ROOT_PART
 
-KERNEL=`ls /boot | grep vmlinuz-`
-INITRD=`ls /boot | grep initrd-`
+KERNEL=`ls /boot | grep vmlinuz- | grep -e "physix.x86_64$"`
+INITRD=`ls /boot | grep initrd- | grep -e "physix.x86_64$"`
 
 if [ $CONF_SKIP_PARTITIONING == "n" ]  ; then
 	# IF PARTITIONING WAS NOT SKIPPED, IT SHOULD BE SAFE TO INSTALL GRUB

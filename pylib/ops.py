@@ -182,15 +182,16 @@ def mount_partitions(config):
 
     boot = BUILDROOT + "/boot"
     os.mkdir(boot, 0o755)
-    boot_part = "/dev/" + config["CONF_ROOT_DEVICE"].strip('\n') + "2"
+    boot_part = "/dev/" + config["CONF_BOOT_DEV_PART"].strip('\n') 
     ret_tpl = run_cmd(['mount', boot_part, boot])
     if validate(ret_tpl, "Mount: " + boot_part):
         return FAILURE
 
     if config['CONF_UEFI_ENABLE'].lower() == 'y':
         efi_dir = BUILDROOT + "/boot/efi"
-        os.mkdir(efi_dir, 0o755)
-        efi_boot_part = "/dev/" + config["CONF_ROOT_DEVICE"].strip('\n') + "1"
+        if not os.path.exists(efi_dir):
+            os.mkdir(efi_dir, 0o755)
+        efi_boot_part = "/dev/" + config["CONF_UEFI_DEV_PART"].strip('\n')
         ret_tpl = run_cmd(['mount', efi_boot_part, efi_dir])
         if validate(ret_tpl, "Mount: " + efi_boot_part):
             return FAILURE
