@@ -259,14 +259,15 @@ def verify_checker(config):
         if validate(ret_tpl, "Check: "+ tool):
             return FAILURE
 
-    #root_dev = config["CONF_ROOT_DEVICE"]
-    #devlst = os.listdir("/dev")
-    #dev_count = sum(1 for ln in devlst if root_dev in ln)
-    #if dev_count > 1:
-    #    msg = "".join(["Found Existing partition(s) on: /dev/", root_dev,
-    #                   "Please remove them and restart this opperation"])
-    #    error(msg)
-    #    return FAILURE
+    if config['CONF_SKIP_PARTITIONING'].lower() = 'n':
+        root_dev = config["CONF_ROOT_DEVICE"]
+        devlst = os.listdir("/dev")
+        dev_count = sum(1 for ln in devlst if root_dev in ln)
+        if dev_count > 1:
+            msg = "".join([" ERROR: Found Existing partition(s) on: /dev/", root_dev,
+                           "Please remove them and restart this opperation"])
+            error(msg)
+            return FAILURE
 
     if config['CONF_UEFI_ENABLE'].lower() == "y":
         if not os.path.exists("/sys/firmware/efi"):
