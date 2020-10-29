@@ -259,6 +259,7 @@ def verify_checker(config):
         if validate(ret_tpl, "Check: "+ tool):
             return FAILURE
 
+
     if config['CONF_SKIP_PARTITIONING'].lower() = 'n':
         root_dev = config["CONF_ROOT_DEVICE"]
         devlst = os.listdir("/dev")
@@ -268,6 +269,15 @@ def verify_checker(config):
                            "Please remove them and restart this opperation"])
             error(msg)
             return FAILURE
+
+    #elif config['CONF_SKIP_PARTITIONING'].lower() = 'y':
+        #verify config['CONF_INSTALL_DEV_PARTITION'] is clean
+        # lsblk config['CONF_INSTALL_DEV_PARTITION'] -o SIZE will
+        # return a line for the partition and each volume.
+        # This will allow assertians of content on device
+    #else:
+        # error()
+
 
     if config['CONF_UEFI_ENABLE'].lower() == "y":
         if not os.path.exists("/sys/firmware/efi"):
