@@ -656,20 +656,16 @@ def separate_device_and_partition(device):
 
     dev = ''
     part = ''
-    for i in range(len(str(DEVICE))):
-        if not device[i].isdigit():
+    for i in range(len(str(device))):
+        if device[i].isalpha():
             dev = dev + device[i]
-        else:
+        elif device[i].isdigit():
             part = part + device[i]
+        else:
+            return []
 
-    for i in range(len(dev)):
-        if dev[i].isdigit():
-            return []
-    for i in range(len(part)):
-        if not part[i].isdigit():
-            return []
+    if (not dev in device) or (not part in device) :
+        return []
 
     return [dev, part]
-
-    
 
