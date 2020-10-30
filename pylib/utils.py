@@ -260,7 +260,7 @@ def verify_checker(config):
             return FAILURE
 
 
-    if config['CONF_SKIP_PARTITIONING'].lower() = 'n':
+    if config['CONF_SKIP_PARTITIONING'].lower() == 'n':
         root_dev = config["CONF_ROOT_DEVICE"]
         devlst = os.listdir("/dev")
         dev_count = sum(1 for ln in devlst if root_dev in ln)
@@ -271,10 +271,12 @@ def verify_checker(config):
             return FAILURE
 
     #elif config['CONF_SKIP_PARTITIONING'].lower() = 'y':
-        #verify config['CONF_INSTALL_DEV_PARTITION'] is clean
-        # lsblk config['CONF_INSTALL_DEV_PARTITION'] -o SIZE will
-        # return a line for the partition and each volume.
-        # This will allow assertians of content on device
+    #    boot = BUILDROOT + "/boot"
+    #    os.mkdir(boot, 0o755)
+    #    boot_part = "/dev/" + config["CONF_BOOT_DEV_PART"].strip('\n')
+    #    ret_tpl = run_cmd(['mount', boot_part, boot])
+    #    if validate(ret_tpl, "Mount: " + boot_part):
+    #        return FAILURE
     #else:
         # error()
 
