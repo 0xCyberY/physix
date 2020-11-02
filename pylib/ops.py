@@ -393,7 +393,7 @@ def setup(config):
 
     (rtn, out, err) = run_cmd(['grep', 'physix', '/etc/passwd'])
     if int(rtn) != 0:
-        ret_tpl = run_cmd(['useradd', '-s', '/bin/bash', '-m', 'physix'])
+        ret_tpl = run_cmd(['useradd', '-s', '/bin/bash', '-m', 'physix', '-U'])
         if validate(ret_tpl, "useradd physix"):
             return FAILURE
 
