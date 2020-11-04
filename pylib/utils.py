@@ -109,8 +109,12 @@ def root_lvm_path():
     return None
 
 
-def get_name_current_stack():
+def get_name_current_stack(context):
     """Return string name of the currently mounted FS snapshot"""
+
+    if context == 'NON-CHRT':
+        return 'STACK_0'
+
     if 'btrfs' != root_fs_type():
         return 'STACK_0'
 
