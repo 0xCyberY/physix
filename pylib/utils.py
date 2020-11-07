@@ -244,7 +244,7 @@ def num_root_device_partitions(config):
     root_dev = config["CONF_ROOT_DEVICE"]
     devlst = os.listdir("/dev")
     dev_count = sum(1 for ln in devlst if root_dev in ln)
-    return dev_count
+    return int(dev_count) - 1
 
 
 def verify_checker(config):
