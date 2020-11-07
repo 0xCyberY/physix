@@ -75,9 +75,9 @@ shareed with any other installed operating systems.
 Quickstart B: Install to a Selected Partition.
 ===========
 NOTE: This installation process is intended for installing Physix on a storage device which is
-ALSO shared by another Operating system. The main difference between Quickstart B is that partitioning 
-is not performed; And grub.cfg will need to be setup manually. An mockup example is written to 
-/boot/grub/physix-grub.cfg.
+ALSO shared by another Operating system. The main difference between Quickstart A and B, is that 
+partitioning is not performed; And grub.cfg will need to be setup manually. An mockup example is 
+written to /boot/physix-grub.cfg.
 
 0. Install required tools on the host system:
     * Debian : sudo apt-get install gcc g++ make gawk bison parted texinfo flex btrfs-tools vim git lvm2
@@ -97,14 +97,16 @@ is not performed; And grub.cfg will need to be setup manually. An mockup example
    NOTE_2: Verify '/sbin' is in your environment PATH.
            echo $PATH | grep '\/sbin'
 
-3. Set up the disk partitions by running:
+3. Set up the disk volumes by running:
      ./catalyst -i physix.conf
    NOTE: This will move this git repository to /mnt/physix/opt/admin/physix
 
 4. Run build script.
      cd /mnt/physix/opt/admin/physix ; ./BUILD_BASE_SYSTEM.sh
 
-5. After reboot, `cd /opt/admin/physix;  ./BUILD_04-08.sh;` to build all packages.
+5. Setup efibootmgr entries
+
+6. After reboot, `cd /opt/admin/physix;  ./BUILD_04-08.sh;` to build all packages.
 
 
 Branches:
