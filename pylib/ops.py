@@ -780,6 +780,13 @@ def do_physix_conf_init(options):
             error("Format Partitions")
             return FAILURE
         ok("Formatted Partitions")
+
+        info("Creating Volumes")
+        if create_volumes(BUILD_CONFIG):
+            error("Creating Volumes")
+            return FAILURE
+        ok("Created Volumes")
+
     elif BUILD_CONFIG['CONF_SKIP_PARTITIONING'].lower() == 'y':
         """ Skip partitioning and setup volumes on CONF_CUSTOM_PARTITION """
         info("Creating Volumes")
