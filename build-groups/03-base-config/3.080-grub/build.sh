@@ -26,30 +26,30 @@ if [ $CONF_SKIP_PARTITIONING == "n" ]  ; then
 	fi
 fi
 
-install --verbose --mode 644 --owner root --group root $PKG_DIR_PATH/lvm-grub.cfg  /boot/grub/physix-grub.cfg
+install --verbose --mode 644 --owner root --group root $PKG_DIR_PATH/lvm-grub.cfg  /boot/physix-grub.cfg
 chroot_check $? "Install grub.cfg"
 
 SED_CMD='s/SET_ROOT_MARKER/'$SET_ROOT'/g'
-sed -i $SED_CMD /boot/grub/physix-grub.cfg
+sed -i $SED_CMD /boot/physix-grub.cfg
 chroot_check $? "Grub sed edit $SED_CMD physix-grub.cfg"
 
 SED_CMD='s/VOL_GROUP_MARKER/'$CONF_VOL_GROUP_NAME'/g'
-sed -i $SED_CMD /boot/grub/physix-grub.cfg
+sed -i $SED_CMD /boot/physix-grub.cfg
 chroot_check $? "Grub sed edit $SED_CMD physix-grub.cfg"
 
 SED_CMD='s/KERNEL_MARKER/'$KERNEL'/g'
-sed -i $SED_CMD /boot/grub/physix-grub.cfg
+sed -i $SED_CMD /boot/physix-grub.cfg
 chroot_check $? "Grub sed edit $SED_CMD physix-grub.cfg"
 
 SED_CMD='s/INITRD_MARKER/'$INITRD'/g'
-sed -i $SED_CMD /boot/grub/physix-grub.cfg
+sed -i $SED_CMD /boot/physix-grub.cfg
 chroot_check $? "Grub sed edit $SED_CMD physix-grub.cfg"
 
 if [ $CONF_SKIP_PARTITIONING == "n" ] ; then
 	# IF PARTITIONING WAS NOT SKIPPED, WE ASSUME /boot WAS 
-    # CREATED AND FORMATTED BY PHYSIX, AND THUS IS SAFE TO WRITE grub.cfg
+	# CREATED AND FORMATTED BY PHYSIX, AND THUS IS SAFE TO WRITE grub.cfg
 	if [ ! -e /boot/grub/grub.cfg ] ; then
-		mv /boot/grub/physix-grub.cfg /boot/grub/grub.cfg
+		mv /boot/physix-grub.cfg /boot/grub/grub.cfg
 		chroot_check $? "mv /boot/grub/physix-grub.cfg /boot/grub/grub.cfg"
 	else
 		echo "Found /boot/grub/grub.cfg, so will not over-write"
