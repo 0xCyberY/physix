@@ -263,7 +263,6 @@ def verify_checker(config):
         if validate(ret_tpl, "Check: "+ tool):
             return FAILURE
 
-
     if config['CONF_SKIP_PARTITIONING'].lower() == 'n':
         root_dev = config["CONF_ROOT_DEVICE"]
         devlst = os.listdir("/dev")
@@ -274,22 +273,26 @@ def verify_checker(config):
             error(msg)
             return FAILURE
 
-    #elif config['CONF_SKIP_PARTITIONING'].lower() = 'y':
-    #    boot = BUILDROOT + "/boot"
-    #    os.mkdir(boot, 0o755)
-    #    boot_part = "/dev/" + config["CONF_BOOT_DEV_PART"].strip('\n')
-    #    ret_tpl = run_cmd(['mount', boot_part, boot])
-    #    if validate(ret_tpl, "Mount: " + boot_part):
-    #        return FAILURE
-    #else:
-        # error()
-
-
     if config['CONF_UEFI_ENABLE'].lower() == "y":
         if not os.path.exists("/sys/firmware/efi"):
             info("Host system not booted via UEFI")
             return FAILURE
 
+    #TODO VERIFY CONF_ROOT_DEVICE HAS COORRECT FLAGS
+    #if CONF_UEFI_ENABLE=='n' and CONF_SKIP_PARTITIONING == 'y':
+    #    device = '/dev/' + config['CONF_ROOT_DEVICE']
+    #    (rtn, output, error) = run_cmd(['parted', device, '-m', print])
+    #    lines = output.split('\n')
+    #    for ln in lines:
+    #        sln = ln.split(':')    
+    #        if len(sln) == 6:
+    #           flag_lst = sln[6]
+    #           if 'esp' in flag_lst:
+    #               msg = "".join(["Installation device ", device, "contains efi system parttion (esp) flag, but UEFI is not set in "])
+    #               error("")
+    #               return FAILURE
+    # else
+    #   check CONF_INSTALL_DEV_PARTITION has 'boot' flag and NOT 'esp'
     return SUCCESS
 
 
