@@ -568,7 +568,7 @@ def build_recipe(recipe, context, start, stop):
                               str(element["group"]),
                               str(element["package"]),
                               "build.sh")
-        log_name = get_name_current_stack() + "-" + str(element["package"])
+        log_name = get_name_current_stack('CHRT') + "-" + str(element["package"])
 
         # CHDIR
         #os.chdir('/opt/admin/sources.physix/BUILDBOX/'+build_src)
