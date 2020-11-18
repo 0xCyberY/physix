@@ -45,7 +45,12 @@ def list_stack(conn):
        conn -- sqlite db object
     """
 
-    stack_name = get_name_current_stack()
+    if os.path.exists('/mnt/physix/opt/admin/physix'):
+        context = 'NON-CHRT'
+    else:
+        context = 'CHRT'
+
+    stack_name = get_name_current_stack(context)
 
     stack_lst = []
     try:
