@@ -1127,7 +1127,7 @@ def do_snapshot(options):
 
     db = get_db_connection('CHRT')    
     if db:
-        curr_stack = get_name_current_stack()
+        curr_stack = get_name_current_stack('CHRT')
     else:
         error("DB connection == None")
         return FAILURE
