@@ -105,8 +105,12 @@ written to /boot/physix-grub.cfg.
      cd /mnt/physix/opt/admin/physix ; ./BUILD_BASE_SYSTEM.sh
 
 5. Setup efibootmgr entries
+   For example, run: efibootmgr -c -d /dev/sda -p 1 -L "PHYSIX" -l '\efi\boot\bootx64.efi'
+   for a system where the EFI and boot partitions are on /dev/sda1 and /dev/sda2, respectively.
 
-6. After reboot, `cd /opt/admin/physix;  ./BUILD_04-08.sh;` to build all packages.
+6. Create a grub boot entry in grub.conf
+
+7. After reboot, `cd /opt/admin/physix;  ./BUILD_04-08.sh;` to build all packages.
 
 
 Branches:
